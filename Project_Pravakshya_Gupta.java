@@ -1,52 +1,59 @@
-import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Project_Pravakshya_Gupta {
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+        ArrayList<Policy> policies = new ArrayList<>();
         DecimalFormat df = new DecimalFormat("0.00");
+        int smokerCount = 0;
+        int nonSmokerCount = 0;
 
-        // Prompt user for policy details
-        System.out.print("Please enter the Policy Number: ");
-        int policyNumber = input.nextInt();
-        input.nextLine(); // clear newline
+        try {
+            Scanner fileScanner = new Scanner(new File("PolicyInformation.txt"));
 
-        System.out.print("Please enter the Provider Name: ");
-        String providerName = input.nextLine();
+            while (fileScanner.hasNextLine()) {
+                int policyNumber = Integer.parseInt(fileScanner.nextLine().trim());
+                String providerName = fileScanner.nextLine().trim();
+                String firstName = fileScanner.nextLine().trim();
+                String lastName = fileScanner.nextLine().trim();
+                int age = Integer.parseInt(fileScanner.nextLine().trim());
+                String smokingStatus = fileScanner.nextLine().trim();
+                float height = Float.parseFloat(fileScanner.nextLine().trim());
+                float weight = Float.parseFloat(fileScanner.nextLine().trim());
 
-        System.out.print("Please enter the Policyholder’s First Name: ");
-        String firstName = input.nextLine();
+                Policy policy = new Policy(policyNumber, providerName, firstName, lastName, age, smokingStatus, height, weight);
+                policies.add(policy);
 
-        System.out.print("Please enter the Policyholder’s Last Name: ");
-        String lastName = input.nextLine();
+                if (smokingStatus.equalsIgnoreCase("smoker")) {
+                    smokerCount++;
+                } else {
+                    nonSmokerCount++;
+                }
+            }
 
-        System.out.print("Please enter the Policyholder’s Age: ");
-        int age = input.nextInt();
-        input.nextLine(); // clear newline
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: File not found.");
+            return;
+        }
 
-        System.out.print("Please enter the Policyholder’s Smoking Status (smoker/non-smoker): ");
-        String smokingStatus = input.nextLine();
+        for (Policy policy : policies) {
+            System.out.println("\nPolicy Number: " + policy.getPolicyNumber());
+            System.out.println("Provider Name: " + policy.getProviderName());
+            System.out.println("Policyholder’s First Name: " + policy.getFirstName());
+            System.out.println("Policyholder’s Last Name: " + policy.getLastName());
+            System.out.println("Policyholder’s Age: " + policy.getAge());
+            System.out.println("Policyholder’s Smoking Status: " + policy.getSmokingStatus());
+            System.out.println("Policyholder’s Height: " + policy.getHeight() + " inches");
+            System.out.println("Policyholder’s Weight: " + policy.getWeight() + " pounds");
+            System.out.println("Policyholder’s BMI: " + df.format(policy.calculateBMI()));
+            System.out.println("Policy Price: $" + df.format(policy.calculatePrice()));
+        }
 
-        System.out.print("Please enter the Policyholder’s Height (in inches): ");
-        float height = input.nextFloat();
-
-        System.out.print("Please enter the Policyholder’s Weight (in pounds): ");
-        float weight = input.nextFloat();
-
-        // Create the Policy object
-        Policy policy = new Policy(policyNumber, providerName, firstName, lastName, age, smokingStatus, height, weight);
-
-        // Output the details
-        System.out.println("\nPolicy Number: " + policy.getPolicyNumber());
-        System.out.println("Provider Name: " + policy.getProviderName());
-        System.out.println("Policyholder’s First Name: " + policy.getFirstName());
-        System.out.println("Policyholder’s Last Name: " + policy.getLastName());
-        System.out.println("Policyholder’s Age: " + policy.getAge());
-        System.out.println("Policyholder’s Smoking Status: " + policy.getSmokingStatus());
-        System.out.println("Policyholder’s Height: " + policy.getHeight() + " inches");
-        System.out.println("Policyholder’s Weight: " + policy.getWeight() + " pounds");
-        System.out.println("Policyholder’s BMI: " + df.format(policy.calculateBMI()));
-        System.out.println("Policy Price: $" + df.format(policy.calculatePrice()));
+        System.out.println("\nNumber of policies with a smoker: " + smokerCount);
+        System.out.println("Number of policies with a non-smoker: " + nonSmokerCount);
     }
 }
-
