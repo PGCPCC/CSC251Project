@@ -15,7 +15,10 @@ public class Project_Pravakshya_Gupta {
             Scanner fileScanner = new Scanner(new File("PolicyInformation.txt"));
 
             while (fileScanner.hasNextLine()) {
-                int policyNumber = Integer.parseInt(fileScanner.nextLine().trim());
+                String line = fileScanner.nextLine().trim();
+                if (line.isEmpty()) continue;
+                
+                int policyNumber = Integer.parseInt(line);
                 String providerName = fileScanner.nextLine().trim();
                 String firstName = fileScanner.nextLine().trim();
                 String lastName = fileScanner.nextLine().trim();
@@ -24,7 +27,8 @@ public class Project_Pravakshya_Gupta {
                 float height = Float.parseFloat(fileScanner.nextLine().trim());
                 float weight = Float.parseFloat(fileScanner.nextLine().trim());
 
-                Policy policy = new Policy(policyNumber, providerName, firstName, lastName, age, smokingStatus, height, weight);
+                PolicyHolder policyholder = new PolicyHolder(firstName, lastName, age, smokingStatus, height, weight);
+                Policy policy = new Policy(policyNumber, providerName, policyholder);
                 policies.add(policy);
 
                 if (smokingStatus.equalsIgnoreCase("smoker")) {
@@ -41,19 +45,12 @@ public class Project_Pravakshya_Gupta {
         }
 
         for (Policy policy : policies) {
-            System.out.println("\nPolicy Number: " + policy.getPolicyNumber());
-            System.out.println("Provider Name: " + policy.getProviderName());
-            System.out.println("Policyholder’s First Name: " + policy.getFirstName());
-            System.out.println("Policyholder’s Last Name: " + policy.getLastName());
-            System.out.println("Policyholder’s Age: " + policy.getAge());
-            System.out.println("Policyholder’s Smoking Status: " + policy.getSmokingStatus());
-            System.out.println("Policyholder’s Height: " + policy.getHeight() + " inches");
-            System.out.println("Policyholder’s Weight: " + policy.getWeight() + " pounds");
-            System.out.println("Policyholder’s BMI: " + df.format(policy.calculateBMI()));
-            System.out.println("Policy Price: $" + df.format(policy.calculatePrice()));
+            System.out.println(policy.toString());
+            System.out.println();
         }
 
-        System.out.println("\nNumber of policies with a smoker: " + smokerCount);
+        System.out.println("Policy Count: " + Policy.getPolicyCount());
+        System.out.println("Number of policies with a smoker: " + smokerCount);
         System.out.println("Number of policies with a non-smoker: " + nonSmokerCount);
     }
 }
